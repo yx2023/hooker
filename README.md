@@ -6,7 +6,10 @@ Phdr是elf在内存视图里的segments，segment是文件视图里section的集
 
 ### Section header (Shdr)<br>
 Shdr是文件视图里面section信息集合<br>
-
+#### rel.dyn和rel.plt
+rel.dyn函数指针方式引用外部函数<br>
+rel.plt直接调用<br>
+全局函数指针会在rel.plt和rel.dyn各插入一条<br>
 ![image](https://user-images.githubusercontent.com/109275975/179179952-156223e9-0be7-495c-8f6c-d38ca553881e.png)
 
 
