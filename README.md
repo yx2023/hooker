@@ -1,3 +1,14 @@
+<a>https://man7.org/linux/man-pages/man5/elf.5.html</a><br>
+<a>https://man7.org/linux/man-pages/man3/dl_iterate_phdr.3.html</a><br>
+### Program header (Phdr)<br>
+Phdr是elf在内存视图里的segments，segment是文件视图里section的集合，dynamic segment里面的信息可以用来定位其他section
+![image](https://user-images.githubusercontent.com/109275975/179177259-fc9cc322-23bb-4681-ba84-6b90349273b0.png)
+![image](https://user-images.githubusercontent.com/109275975/179177462-b8e8d2b4-e6e0-4ca9-9d96-e5011ac51e24.png)
+### Section header (Shdr)<br>
+Shdr是文件视图里面section信息集合
+![image](https://user-images.githubusercontent.com/109275975/179179952-156223e9-0be7-495c-8f6c-d38ca553881e.png)
+![image](https://user-images.githubusercontent.com/109275975/179179545-3d0ec733-e1c7-47c9-b43f-abe939469bb5.png)
+
 ### 1.调用dl_iterate_phdr遍历动态链接库,获取所需动态库加载基址和位于phdr的dynamic segment信息<br>
 ```
 int dl_iterate_phdr(
