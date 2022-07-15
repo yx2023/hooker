@@ -18,6 +18,11 @@ Shdr是文件视图里面section信息集合<br>
 .rela.dyn <-> RELA<br>
 ![image](https://user-images.githubusercontent.com/109275975/179184783-3bccf62d-a682-4ce7-9abd-aabcc0215cf5.png)
 
+### PLT和GOT
+简单来说plt是一段跳转到存放函数入口地址的got表的代码
+![image](https://user-images.githubusercontent.com/109275975/179194527-1232433d-8e73-4c55-a4d2-196b5c7247b6.png)
+
+<a>https://lzz5235.github.io/2015/12/08/pltgot.html</a>
 
 ### 1.调用dl_iterate_phdr遍历动态链接库,获取所需动态库加载基址和位于phdr的dynamic segment信息<br>
 ```
