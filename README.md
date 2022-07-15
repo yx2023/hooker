@@ -1,4 +1,4 @@
-1.调用dl_iterate_phdr遍历动态链接库,获取所需动态库加载基址和位于phdr的dynamic segment信息<br>
+### 1.调用dl_iterate_phdr遍历动态链接库,获取所需动态库加载基址和位于phdr的dynamic segment信息<br>
 ```
 int dl_iterate_phdr(
                  int (*callback)(struct dl_phdr_info *info,
@@ -39,6 +39,20 @@ struct dl_phdr_info {
            };
 
 ```
+#### 代码
+```
+    int hookCallback(struct dl_phdr_info *info, size_t size, void *data)
+    {
+      printf("%s\n", info->dlpi_name);
+      ElfW(Addr) baseAddr = 0;
+      ElfW(Addr) virtAddr = 0;
+      int segmentsNum = 0;
+      if (strstr(info->dlpi_name, ((struct hookData*)data)->soName) != NULL) {
+        printf("find the obj addr is 0x%016lx\n", info->dlpi_addr);
+        baseAddr = info->dlpi_addr;
+    }
+```
+### 2.在phdr里面搜索dynmic segment，里面有各个section的信息
 ```
 typedef struct {
                Elf32_Word  p_type;    /* Segment type */
@@ -62,7 +76,7 @@ typedef struct {
             }
         }
 ```
-2.遍历elf内存视图dynamic segment里面的section信息<br>
+### 3.遍历elf内存视图dynamic segment里面的section信息<br>
 <br>
 DT_RElA:    &emsp;&emsp;对应文件视图里的rela.dyn，存储的是外部引用的全局变量符号信息<br>
 DT_JMPREL:  &emsp;&emsp;对应的是文件视图里rela.plt，是外部引用的函数符号信息<br>
@@ -129,4 +143,31 @@ DT_SYMTAB:  &emsp;符号表<br>
                     break;
             }
         }
+```
+### 4.根据dynmic中获取的各个section, <br>
+&emsp;1）遍历jmpRel，r_info表示每个外部函数符号在symTab中的索引<br>
+&emsp;2）获取symTab中该函数符号的st_name，表示在strTab中的字符串位置<br>
+&emsp;3）比对是不是想替换的函数符号<br>
+&emsp;4）根据jmpRel中该符号的r_offset + baseAddr找到.got表中该函数地址<br>
+#### 代码
+```
+    unsigned long symIndex = ELF64_R_SYM(jmpRelTable[i].r_info);
+            unsigned long symStrOffset = symTable[symIndex].st_name;
+            char* symName = (char*)(strTable + symStrOffset);
+            printf("symName is : %s\n", symName);
+
+           
+            if (strcmp(symName, ((struct hookData*)data)->symName) == 0) {
+                printf("find the sym : %s\n", symName);
+                printf("r_offset is 0x%016lx\n", jmpRelTable[i].r_offset);
+```
+### 5. 用mprotect对r_offset + baseAddr所在的页进行权限设置并替换函数入口
+#### 代码
+```
+      unsigned long page_size = getpagesize();
+                unsigned long page_start = (Elf64_Addr)(jmpRelTable[i].r_offset + baseAddr) & (~(page_size -1));
+                mprotect((void*)page_start, page_size, PROT_READ|PROT_WRITE|PROT_EXEC);
+                printf("soAddr is 0x%016lx\n", ((struct hookData*)data)->soAddr);
+                *(void**)(jmpRelTable[i].r_offset + baseAddr) = ((struct hookData*)data)->soAddr;
+                printf("soAddr is 0x%016lx\n", ((struct hookData*)data)->soAddr);
 ```
