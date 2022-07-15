@@ -17,7 +17,7 @@ rel.plt直接调用<br>
 .dynSym <-> SYMTAB<br>
 .dynStr <-> STRTAB<br>
 .rela.plt <-> JMPREL<br>
-.got <-> PLTGOT<br>
+.got.plt <-> PLTGOT<br>
 .rela.dyn <-> RELA<br>
 ![image](https://user-images.githubusercontent.com/109275975/179184783-3bccf62d-a682-4ce7-9abd-aabcc0215cf5.png)
 
