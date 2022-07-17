@@ -1,3 +1,32 @@
+<a>https://man7.org/linux/man-pages/man5/elf.5.html</a><br>
+<a>https://man7.org/linux/man-pages/man3/dl_iterate_phdr.3.html</a><br>
+### Program header (Phdr)<br>
+Phdr是elf在内存视图里的segments，segment是文件视图里section的集合，dynamic segment里面的信息可以用来定位其他section<br>
+![image](https://user-images.githubusercontent.com/109275975/179177259-fc9cc322-23bb-4681-ba84-6b90349273b0.png)
+
+### Section header (Shdr)<br>
+Shdr是文件视图里面section信息集合<br>
+#### rel.dyn和rel.plt
+rel.dyn函数指针方式引用外部函数<br>
+rel.plt直接调用<br>
+全局函数指针会在rel.plt和rel.dyn各插入一条<br>
+![image](https://user-images.githubusercontent.com/109275975/179179952-156223e9-0be7-495c-8f6c-d38ca553881e.png)
+
+
+### 文件视图和内存视图的映射关系
+.dynSym <-> SYMTAB<br>
+.dynStr <-> STRTAB<br>
+.rela.plt <-> JMPREL<br>
+.got.plt <-> PLTGOT<br>
+.rela.dyn <-> RELA<br>
+![image](https://user-images.githubusercontent.com/109275975/179184783-3bccf62d-a682-4ce7-9abd-aabcc0215cf5.png)
+
+### PLT和GOT
+简单来说plt是一段跳转到存放函数入口地址的got表的代码
+![image](https://user-images.githubusercontent.com/109275975/179194527-1232433d-8e73-4c55-a4d2-196b5c7247b6.png)
+
+<a>https://lzz5235.github.io/2015/12/08/pltgot.html</a>
+
 ### 1.调用dl_iterate_phdr遍历动态链接库,获取所需动态库加载基址和位于phdr的dynamic segment信息<br>
 ```
 int dl_iterate_phdr(
